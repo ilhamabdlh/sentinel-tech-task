@@ -86,26 +86,7 @@ async function processData(data: string): Promise<string> {
 
 ## How to Run
 
-### Option 1: TypeScript Compiler
-```bash
-cd typescript
-tsc level-1.ts && node level-1.js
-tsc level-2.ts && node level-2.js
-tsc level-2.5.ts && node level-2.5.js
-tsc level-1-alternative.ts && node level-1-alternative.js
-```
-
-### Option 2: Online TypeScript Playground
+### Online TypeScript Playground
 1. Copy code from any file
 2. Paste into [TypeScript Playground](https://www.typescriptlang.org/play)
 3. Run and see results
-
-### Option 3: Node.js with ts-node
-```bash
-npm install -g ts-node
-cd typescript
-ts-node level-1.ts
-ts-node level-2.ts
-ts-node level-2.5.ts
-ts-node level-1-alternative.ts
-```
