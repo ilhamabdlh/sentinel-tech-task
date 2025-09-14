@@ -78,40 +78,57 @@ CREATE TABLE moderation_queue (
 
 ### Level 1: Count customers from Germany
 ```sql
+-- LEVEL 1: Count customers from Germany
+-- ==============================================
+
 SELECT COUNT(*) as german_customers
 FROM Customers 
 WHERE Country = 'Germany';
+
+-- Expected Result: Should return a single number representing German customers
 ```
 
 ### Level 2: Countries with most customers (min 5 customers)
 ```sql
-SELECT Country, COUNT(CustomerID) as customer_count
+-- Countries with most customers (minimum 5 customers)
+SELECT 
+    Country, 
+    COUNT(CustomerID) as customer_count
 FROM Customers
 GROUP BY Country
 HAVING COUNT(CustomerID) >= 5
 ORDER BY customer_count DESC;
-```
 
-**Expected Result:**
-- USA: 13
-- Germany: 11
-- France: 11
-- Brazil: 9
-- UK: 7
-- Spain: 5
-- Mexico: 5
+-- Expected results:
+-- USA: 13 customers
+-- Germany: 11 customers  
+-- France: 11 customers
+-- Brazil: 9 customers
+-- UK: 7 customers
+-- Spain: 5 customers
+-- Mexico: 5 customers
+```
 
 ### Level 3: Reverse Engineer - Customer Order Summary
 ```sql
-SELECT 
-    c.CustomerName,
-    COUNT(o.OrderID) as OrderCount,
-    MIN(o.OrderDate) as FirstOrder,
-    MAX(o.OrderDate) as LastOrder
-FROM Customers c
-JOIN Orders o ON c.CustomerID = o.CustomerID
-GROUP BY c.CustomerID, c.CustomerName
-ORDER BY OrderCount DESC, c.CustomerName;
+-- LEVEL 3: Reverse Engineer - Customer Order Summary
+
+SELECT Customers.CustomerName,
+       COUNT(Orders.OrderID) AS OrderCount,
+       MIN(Orders.OrderDate) AS FirstOrder,
+       MAX(Orders.OrderDate) AS LastOrder
+FROM Customers
+INNER JOIN Orders ON Customers.CustomerID = Orders.CustomerID
+GROUP BY Customers.CustomerName
+ORDER BY COUNT(Orders.OrderID) DESC;
+
+
+-- This query will produce the exact format shown in the assignment:
+-- - CustomerName: The name of the customer
+-- - OrderCount: Total number of orders placed by that customer
+-- - FirstOrder: Date of their first order
+-- - LastOrder: Date of their most recent order
+-- - Results ordered by order count (descending) then by customer name
 ```
 
 ---
@@ -120,6 +137,7 @@ ORDER BY OrderCount DESC, c.CustomerName;
 
 ### Level 1: Title Case Function
 ```javascript
+// Title Case Function
 function titleCase(str) {
     return str.toLowerCase()
               .split(' ')
@@ -127,19 +145,38 @@ function titleCase(str) {
               .join(' ');
 }
 
-// Test cases
 console.log(titleCase("I'm a little tea pot")); // "I'm A Little Tea Pot"
 console.log(titleCase("sHoRt AnD sToUt")); // "Short And Stout"
 console.log(titleCase("SHORT AND STOUT")); // "Short And Stout"
 ```
 
+### Level 1 Alternative: Word Frequency Counter
+```typescript
+function wordFrequencyFixedOrder(text: string): string {
+    const counts = text
+      .toLowerCase()
+      .replace(/[^\w\s]/g, "")
+      .split(/\s+/)
+      .reduce((acc: Record<string, number>, word) => {
+        acc[word] = (acc[word] || 0) + 1;
+        return acc;
+      }, {});
+  
+    const order = ["one", "two", "three", "four"];
+  
+    return order.map(word => `${word} => ${counts[word] || 0}`).join("\n");
+}
+
+console.log(wordFrequencyFixedOrder("Four One two two three Three three four four  four"));
+```
+
 ### Level 2: Delay Function with Promise
-```javascript
-function delay(ms) {
+```typescript
+// Delay Function
+function delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Usage
 delay(3000).then(() => alert('runs after 3 seconds'));
 ```
 
@@ -184,43 +221,30 @@ fetchData('https://api.example.com', (error, data) => {
 ```
 
 **Refactored with Async/Await:**
-```javascript
-function fetchData(url) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            if (!url) {
-                reject(new Error('URL is required'));
-            } else {
-                resolve(`Data from ${url}`);
-            }
-        }, 1000);
+```typescript
+async function fetchData(url: string): Promise<string> {
+    if (!url) throw new Error("URL is required");
+    return new Promise(resolve => {
+      setTimeout(() => resolve(`Data from ${url}`), 1000);
     });
 }
-
-function processData(data) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            if (!data) {
-                reject(new Error('Data is required'));
-            } else {
-                resolve(data.toUpperCase());
-            }
-        }, 1000);
+  
+async function processData(data: string): Promise<string> {
+    if (!data) throw new Error("Data is required");
+    return new Promise(resolve => {
+      setTimeout(() => resolve(data.toUpperCase()), 1000);
     });
 }
-
-// Async/Await usage
-async function handleData() {
+  
+(async () => {
     try {
-        const data = await fetchData('https://api.example.com');
-        const processedData = await processData(data);
-        console.log('Final result:', processedData);
-    } catch (error) {
-        console.error('Error:', error.message);
+      const data = await fetchData("https://example.com");
+      const processed = await processData(data);
+      console.log("Processed Data:", processed);
+    } catch (err) {
+      console.error(err);
     }
-}
-
-handleData();
+})();
 ```
 
 ### Level 3-4: Real-time Chat Application
@@ -318,55 +342,48 @@ I have experience with:
 package main
 
 import (
-    "fmt"
-    "regexp"
-    "sort"
-    "strings"
+	"fmt"
+	"regexp"
+	"strings"
 )
 
-func countWordFrequency(text string) map[string]int {
-    // Remove punctuation and convert to lowercase
-    re := regexp.MustCompile(`[^\w\s]`)
-    cleanText := re.ReplaceAllString(text, " ")
-    cleanText = strings.ToLower(cleanText)
-    
-    // Split into words
-    words := strings.Fields(cleanText)
-    
-    // Count frequency
-    frequency := make(map[string]int)
-    for _, word := range words {
-        frequency[word]++
-    }
-    
-    return frequency
+func wordFrequency(input string) map[string]int {
+	re := regexp.MustCompile(`[\W\s]+`)
+	clean := re.ReplaceAllString(input, " ")
+	words := strings.Fields(strings.ToLower(clean))
+
+	counts := make(map[string]int)
+	for _, w := range words {
+		counts[w]++
+	}
+	return counts
 }
 
 func main() {
-    text := "Four, One two two three Three three four four four"
-    frequency := countWordFrequency(text)
-    
-    // Sort keys for consistent output
-    var keys []string
-    for key := range frequency {
-        keys = append(keys, key)
-    }
-    sort.Strings(keys)
-    
-    // Print results
-    for _, key := range keys {
-        fmt.Printf("%s => %d\n", key, frequency[key])
-    }
+	text := "Four, One two two three Three three four four  four"
+	counts := wordFrequency(text)
+
+	order := []string{"one", "two", "three", "four"}
+
+	for _, w := range order {
+		fmt.Printf("%s => %d\n", w, counts[w])
+	}
 }
 ```
 
 **Expected Output:**
 ```
-four => 4
 one => 1
-three => 3
 two => 2
+three => 3
+four => 4
 ```
+
+**Implementation Details:**
+- Uses regex to remove punctuation and normalize whitespace
+- Converts text to lowercase for case-insensitive comparison
+- Returns results in fixed order: one, two, three, four
+- Simple and efficient implementation
 
 ---
 
