@@ -57,3 +57,10 @@ All code solutions are provided with clear instructions and can be executed dire
 - **Modern JavaScript** with async/await patterns
 - **Golang implementation** with proper error handling
 - **Best practices** for security and performance
+
+### Chat App Sys
+
+<img width="999" height="743" alt="Screenshot 2025-09-14 at 18 52 33" src="https://github.com/user-attachments/assets/6609fa84-8f35-445c-91da-5b732b8064a9" />
+<img width="1444" height="813" alt="Screenshot 2025-09-14 at 18 52 55" src="https://github.com/user-attachments/assets/b99c9cfe-c5da-49f3-a7e1-38303d9d3bfe" />
+
+
