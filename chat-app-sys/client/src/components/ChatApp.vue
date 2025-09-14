@@ -147,7 +147,7 @@ export default {
   },
   methods: {
     connectSocket() {
-      this.socket = io('http://localhost:3000', {
+      this.socket = io('http://13.55.197.252:3000', {
         transports: ['websocket', 'polling']
       });
 
